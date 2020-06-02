@@ -1,0 +1,38 @@
+version: '3.3'
+services:
+  wordpress:
+    container_name: wordpress-${PROJECT_NAME}
+    tty: true
+    image: wordpress:latest
+    depends_on:
+      - db
+    ports:
+      - "${PORT}:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+    volumes:
+      - ./www/html:/var/www/html
+      - ./config/apache2/sites-available:/etc/apache2/sites-available
+    working_dir: $WP_DIR
+  db:
+    image: mysql:5.7
+    container_name: mysql-${PROJECT_NAME}
+    volumes:
+      - ./db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+  pma:
+    container_name: pma-${PROJECT_NAME}
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      PMA_HOST: db
+    ports:
+    - "8080:80"
+    links:
+      - db
