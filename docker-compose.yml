@@ -15,6 +15,7 @@ services:
       WORDPRESS_DB_NAME: wordpress
     volumes:
       - ./www/html:/var/www/html
+      - ./log:/var/log/apache2
       - ./config/apache2/sites-available:/etc/apache2/sites-available
     working_dir: $WP_DIR
   db:

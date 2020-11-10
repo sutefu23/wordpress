@@ -1,3 +1,7 @@
 .htaccess
 /db_data
+/www/html/cms/*.php
 /www/html/cms/wp-admin
+/www/html/cms/wp-includes
+/www/html/cms/wp-content/*
+!themes
