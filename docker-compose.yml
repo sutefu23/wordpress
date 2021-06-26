@@ -35,6 +35,8 @@ services:
       PMA_HOST: db
     ports:
     - "8080:80"
+    environment:
+      - UPLOAD_LIMIT=20480K
     links:
       - db
   mailhog:
