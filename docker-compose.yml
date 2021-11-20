@@ -17,7 +17,7 @@ services:
       - ${LOCAL_DIR}:/var/www/html
       - ./log:/var/log/apache2
       - ./config/apache2/sites-available:/etc/apache2/sites-available
-    working_dir: /var/www/${WP_DIR}
+    working_dir: /var/www/html/${WP_DIR}
   db:
     image: mysql:5.7
     container_name: mysql-${PROJECT_NAME}
