@@ -14,10 +14,10 @@ services:
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      - ./www/html:/var/www/html
+      - ${LOCAL_DIR}:/var/www/html
       - ./log:/var/log/apache2
       - ./config/apache2/sites-available:/etc/apache2/sites-available
-    working_dir: $WP_DIR
+    working_dir: /var/www/${WP_DIR}
   db:
     image: mysql:5.7
     container_name: mysql-${PROJECT_NAME}
@@ -33,10 +33,9 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     environment:
       PMA_HOST: db
+      UPLOAD_LIMIT: 20480K
     ports:
     - "8080:80"
-    environment:
-      - UPLOAD_LIMIT=20480K
     links:
       - db
   mailhog:
