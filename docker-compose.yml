@@ -1,26 +1,26 @@
 version: '3.3'
 services:
   wordpress:
-    container_name: wordpress-${PROJECT_NAME}
+    container_name: wordpress-${PROJECT_NAME:-docker}
     tty: true
-    image: wordpress:latest
+    image: wordpress:${DOCKER_WORDPRESS_TAG:-latest}
     depends_on:
       - db
     ports:
-      - "${PORT}:80"
+      - "${PORT:-80}:80"
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
       WORDPRESS_DB_PASSWORD: wordpress
       WORDPRESS_DB_NAME: wordpress
     volumes:
-      - ${LOCAL_DIR}:/var/www/html
+      - ${LOCAL_DIR:-./html}:/var/www/html
       - ./log:/var/log/apache2
       - ./config/apache2/sites-available:/etc/apache2/sites-available
-    working_dir: /var/www/html/${WP_DIR}
+    working_dir: /var/www/html/${WP_DIR:-wordpress}
   db:
     image: mysql:5.7
-    container_name: mysql-${PROJECT_NAME}
+    container_name: mysql-${PROJECT_NAME:-docker}
     volumes:
       - ./db_data:/var/lib/mysql
     environment:
@@ -29,7 +29,7 @@ services:
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: wordpress
   pma:
-    container_name: pma-${PROJECT_NAME}
+    container_name: pma-${PROJECT_NAME:-docker}
     image: phpmyadmin/phpmyadmin:latest
     environment:
       PMA_HOST: db
