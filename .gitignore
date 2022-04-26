@@ -6,3 +6,4 @@
 **/wp-content/*
 !themes
 *.log
+.env

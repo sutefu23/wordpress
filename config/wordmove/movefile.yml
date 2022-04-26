@@ -1,0 +1,98 @@
+global:
+  sql_adapter: default
+local:
+  vhost: "https://localhost/"
+  wordpress_path: "/var/www/html/"
+  database:
+    name: "wordpress"
+    user: "wordpress"
+    password: "wordpress"
+    host: "db"
+staging:
+  vhost: "<%= ENV['STAGING_URL'] %>"
+  wordpress_path: "<%= ENV['STAGING_DIR_PATH'] %>"
+  database:
+    name: "<%= ENV['STAGING_DB_NAME'] %>"
+    user: "<%= ENV['STAGING_DB_USER'] %>"
+    password: "<%= ENV['STAGING_DB_PASSWORD'] %>"
+    host: "<%= ENV['STAGING_DB_HOST'] %>"
+    port: "<%= ENV['STAGING_DB_PORT'] %>"
+  exclude:
+    - '.git/'
+    - '.gitignore'
+    - '.gitmodules'
+    - '.env'
+    - 'bin/'
+    - 'tmp/*'
+    - 'Gemfile*'
+    - 'Movefile'
+    - 'movefile'
+    - 'movefile.yml'
+    - 'movefile.yaml'
+    - 'wp-config.php'
+    - 'wp-content/*.sql.gz'
+    - 'wp-includes/*'
+    - 'wp-admin/*'
+    - '*.orig'
+    - '*.log'
+    - 'node_modules/'
+    - "wp-content/uploads/backwpup*/*"
+    - ".htaccess"
+    - "+ wp-content/plugins/acf-repeater/"
+    - "+ wp-content/plugins/seven-eleven-block/"
+    - "wp-content/plugins/*"
+  ssh:
+    host: "<%= ENV['STAGING_SSH_HOST'] %>"
+    user: "<%= ENV['STAGING_SSH_USER'] %>"
+    port: "<%= ENV['STAGING_SSH_PORT'] %>"
+    rsync_options: "--verbose"
+production:
+  vhost: "<%= ENV['PRODUCTION_URL'] %>"
+  wordpress_path: "<%= ENV['PRODUCTION_DIR_PATH'] %>"
+  database:
+    name: "<%= ENV['PRODUCTION_DB_NAME'] %>"
+    user: "<%= ENV['PRODUCTION_DB_USER'] %>"
+    password: "<%= ENV['PRODUCTION_DB_PASSWORD'] %>"
+    host: "<%= ENV['PRODUCTION_DB_HOST'] %>"
+    port: "<%= ENV['PRODUCTION_DB_PORT'] %>"
+  exclude:
+    - '.git/'
+    - '.gitignore'
+    - '.gitmodules'
+    - '.env'
+    - 'bin/'
+    - 'tmp/*'
+    - 'Gemfile*'
+    - 'Movefile'
+    - 'movefile'
+    - 'movefile.yml'
+    - 'movefile.yaml'
+    - 'wp-config.php'
+    - 'wp-content/*.sql.gz'
+    - '*.orig'
+    - '*.log'
+    - 'node_modules/'
+    - 'wp-includes/*'
+    - 'wp-admin/*'
+    - "wp-content/uploads/backwpup*/*"
+    - ".htaccess"
+    - "+ wp-content/plugins/acf-repeater/"
+    - "+ wp-content/plugins/seven-eleven-block/"
+    - "wp-content/plugins/*"
+  ssh:
+    host: "<%= ENV['PRODUCTION_SSH_HOST'] %>"
+    user: "<%= ENV['PRODUCTION_SSH_USER'] %>"
+    port: "<%= ENV['PRODUCTION_SSH_PORT'] %>"
+    rsync_options: '--verbose --rsync-path="sudo /usr/bin/rsync"'
+  hooks:
+    pull:
+        before:
+          - command: 'sudo chmod 775 <%= ENV['PRODUCTION_DIR_PATH'] %>/wp-content'
+            where: remote
+        after:
+          - command: 'sudo chmod 755 <%= ENV['PRODUCTION_DIR_PATH'] %>/wp-content'
+            where: remote
+    push:
+        before:
+          - command: 'mysqldump <%= ENV['PRODUCTION_DB_NAME'] %> --host=<%= ENV['PRODUCTION_DB_HOST'] %> --port=<%= ENV['PRODUCTION_DB_PORT'] %> --user=<%= ENV['PRODUCTION_DB_USER'] %> --password=<%= ENV['PRODUCTION_DB_PASSWORD'] %> --result-file=/tmp/dump`date "+%Y%m%d_%H%M%S"`.sql --no-tablespaces'
+            where: remote
