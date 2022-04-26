@@ -1,7 +1,7 @@
 include .env
 setup:
 	docker-compose build
-	docker-compose exec wordpress wp plugin install advanced-custom-fields --activate --allow-root
+#docker-compose exec wordpress wp plugin install advanced-custom-fields --activate --allow-root
 
 up:
 	docker-compose up -d
