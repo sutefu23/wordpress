@@ -13,10 +13,10 @@
 /html/*.txt
 /html/*.html
 /html/wp-content/themes/*
-!/html/wp-content/themes/seven-eleven-design-system
+!/html/wp-content/themes/design-system
 /html/wp-content/plugins/*
 !/html/wp-content/plugins/acf-repeater
-!/html/wp-content/plugins/seven-eleven-block
+!/html/wp-content/plugins/block
 !.gitkeep
 *.sql
 *.sql.gz

@@ -9,6 +9,8 @@ RUN echo 'sendmail_path="/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025 --fr
 # RUN rm -rf /var/www/html/*
 # ADD ${LOCAL_DIR:-html} /var/www/html/
 # RUN chown -R www-data:www-data /var/www/html/${WP_DIR:-wordpress}/wp-content
-
+RUN a2ensite default-ssl
+RUN a2enmod ssl
+RUN service apache2 restart
 ENV HOST 0.0.0.0
 
