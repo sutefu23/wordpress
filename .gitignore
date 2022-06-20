@@ -20,3 +20,4 @@
 !.gitkeep
 *.sql
 *.sql.gz
+.vscode
