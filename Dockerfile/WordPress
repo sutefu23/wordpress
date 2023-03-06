@@ -1,0 +1,34 @@
+FROM wordpress:6.0.1-php7.4-apache
+RUN apt-get update
+RUN apt-get -y install unzip libapache2-mod-wsgi-py3
+
+RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+RUN echo "Asia/Tokyo" > /etc/timezone
+
+RUN curl --location --output /usr/local/bin/mhsendmail https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 && \
+    chmod +x /usr/local/bin/mhsendmail
+RUN echo 'sendmail_path="/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025 --from=admin@example.com"' > /usr/local/etc/php/conf.d/mailhog.ini
+
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+RUN chmod +x wp-cli.phar
+RUN mv wp-cli.phar /usr/local/bin/wp
+
+ADD ./certs/localhost+3.pem /etc/ssl/private/
+ADD ./certs/localhost+3-key.pem /etc/ssl/private/
+
+ADD ./config/apache2/sites-available/000-default.conf /etc/apache2/sites-available
+ADD ./config/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available
+
+RUN curl -s https://getcomposer.org/installer | php && mv -v composer.phar /usr/local/bin/composer
+
+RUN a2ensite default-ssl
+RUN a2enmod ssl
+RUN a2enmod wsgi
+RUN service apache2 restart
+
+RUN rm -rf /var/www/html/*
+ADD html /var/www/html/
+RUN chown -R www-data:www-data /var/www/html/wp-content
+
+ENV HOST 0.0.0.0
+

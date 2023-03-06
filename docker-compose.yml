@@ -6,7 +6,7 @@ services:
     env_file: ./.env
     build:
       context: .
-      dockerfile: ./Dockerfile/WordPress.Dockerfile
+      dockerfile: ./Dockerfile/WordPress
     depends_on:
       - db
     ports:
@@ -20,8 +20,8 @@ services:
       WORDPRESS_WP_DEBUG: "true"
       WORDPRESS_SCRIPT_DEBUG: "true"
       WORDPRESS_CONFIG_EXTRA: |
-          define('WP_SITEURL', $$_SERVER['REQUEST_SCHEME'] . '://' . $$_SERVER['HTTP_HOST'] . '/');
-          define('WP_HOME', $$_SERVER['REQUEST_SCHEME'] . '://' . $$_SERVER['HTTP_HOST'] . '/');
+        define('WP_SITEURL', $$_SERVER['REQUEST_SCHEME'] . '://' . $$_SERVER['HTTP_HOST'] . '/');
+        define('WP_HOME', $$_SERVER['REQUEST_SCHEME'] . '://' . $$_SERVER['HTTP_HOST'] . '/');
     volumes:
       - ${LOCAL_DIR:-./html}:/var/www/html
       - ./log:/var/log/apache2
@@ -45,7 +45,7 @@ services:
       PMA_HOST: db
       UPLOAD_LIMIT: 20480K
     ports:
-    - "8080:80"
+      - "8080:80"
     links:
       - db
   wordmove:
