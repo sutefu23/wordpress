@@ -13,8 +13,8 @@ RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli
 RUN chmod +x wp-cli.phar
 RUN mv wp-cli.phar /usr/local/bin/wp
 
-ADD ./certs/localhost+3.pem /etc/ssl/private/
-ADD ./certs/localhost+3-key.pem /etc/ssl/private/
+ADD ./certs/localhost+1.pem /etc/ssl/private/
+ADD ./certs/localhost+1-key.pem /etc/ssl/private/
 
 ADD ./config/apache2/sites-available/000-default.conf /etc/apache2/sites-available
 ADD ./config/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available

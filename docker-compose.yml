@@ -43,11 +43,19 @@ services:
     image: phpmyadmin/phpmyadmin:latest
     environment:
       PMA_HOST: db
+      PMA_USER: wordpress
+      PMA_PASSWORD: wordpress
       UPLOAD_LIMIT: 20480K
     ports:
       - "8080:80"
     links:
       - db
+  mailhog:
+    container_name: mailhog-${PROJECT_NAME:-docker}
+    image: mailhog/mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
   wordmove:
     tty: true
     depends_on:
