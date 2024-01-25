@@ -26,9 +26,17 @@ RUN a2enmod ssl
 RUN a2enmod wsgi
 RUN service apache2 restart
 
-RUN rm -rf /var/www/html/*
-ADD html /var/www/html/
+# RUN rm -rf /var/www/html/*
+# ADD html /var/www/html/
 RUN chown -R www-data:www-data /var/www/html/wp-content
 
+RUN echo "php_value memory_limit 1G\nphp_value post_max_size 1G\nphp_value upload_max_filesize 1G" > /temp_htaccess && \
+    if [ -f /html/.htaccess ]; then \
+    cat /temp_htaccess /html/.htaccess > /html/.htaccess.new && \
+    mv /html/.htaccess.new /html/.htaccess; \
+    else \
+    mv /temp_htaccess /html/.htaccess; \
+    fi && \
+    rm -f /temp_htaccess
 ENV HOST 0.0.0.0
 

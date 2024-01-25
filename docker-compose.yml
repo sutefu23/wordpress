@@ -26,6 +26,7 @@ services:
       - ${LOCAL_DIR:-./html}:/var/www/html
       - ./log:/var/log/apache2
       - ./config/apache2/sites-available:/etc/apache2/sites-available
+      # - ./config/php:/usr/local/etc/php # Docker用の設定ファイルが多いためここではなく.htaccessにアップロード上限などは追記するように
       - ./certs:/etc/ssl/private
     working_dir: /var/www/html/${WP_DIR:-wordpress}
   db:
@@ -67,7 +68,7 @@ services:
       - ./entrypoint.sh:/root/entrypoint.sh:ro
       - ./config/wordmove:/root/wordmove:ro
       - ${LOCAL_DIR:-./html}:/var/www/html
-    entrypoint: /root/entrypoint.sh
+    # entrypoint: /root/entrypoint.sh #certsファイルがある時必要
     working_dir: /root/wordmove
     secrets:
       - ssh_key
