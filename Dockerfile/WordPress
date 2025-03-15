@@ -1,41 +1,39 @@
-FROM wordpress:6.0.1-php7.4-apache
-RUN apt-get update
-RUN apt-get -y install unzip libapache2-mod-wsgi-py3
-
-RUN ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
-RUN echo "Asia/Tokyo" > /etc/timezone
+FROM wordpress:6.7.1-php7.4-apache
+RUN apt-get update && \
+    apt-get -y install unzip libapache2-mod-wsgi-py3 && \
+    ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime && \
+    echo "Asia/Tokyo" > /etc/timezone
 
 RUN curl --location --output /usr/local/bin/mhsendmail https://github.com/mailhog/mhsendmail/releases/download/v0.2.0/mhsendmail_linux_amd64 && \
     chmod +x /usr/local/bin/mhsendmail
 RUN echo 'sendmail_path="/usr/local/bin/mhsendmail --smtp-addr=mailhog:1025 --from=admin@example.com"' > /usr/local/etc/php/conf.d/mailhog.ini
 
-RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
-RUN chmod +x wp-cli.phar
-RUN mv wp-cli.phar /usr/local/bin/wp
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-ADD ./certs/localhost+1.pem /etc/ssl/private/
-ADD ./certs/localhost+1-key.pem /etc/ssl/private/
+COPY ./certs/localhost+1.pem /etc/ssl/private/
+COPY ./certs/localhost+1-key.pem /etc/ssl/private/
 
-ADD ./config/apache2/sites-available/000-default.conf /etc/apache2/sites-available
-ADD ./config/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available
+COPY ./config/apache2/sites-available/000-default.conf /etc/apache2/sites-available
+COPY ./config/apache2/sites-available/default-ssl.conf /etc/apache2/sites-available
 
 RUN curl -s https://getcomposer.org/installer | php && mv -v composer.phar /usr/local/bin/composer
 
-RUN a2ensite default-ssl
-RUN a2enmod ssl
-RUN a2enmod wsgi
-RUN service apache2 restart
+RUN a2ensite default-ssl && \
+    a2enmod ssl && \
+    a2enmod wsgi
 
 # RUN rm -rf /var/www/html/*
 # ADD html /var/www/html/
 RUN chown -R www-data:www-data /var/www/html/wp-content
 
-RUN echo "php_value memory_limit 1G\nphp_value post_max_size 1G\nphp_value upload_max_filesize 1G" > /temp_htaccess && \
-    if [ -f /html/.htaccess ]; then \
-    cat /temp_htaccess /html/.htaccess > /html/.htaccess.new && \
-    mv /html/.htaccess.new /html/.htaccess; \
+RUN printf "php_value memory_limit 1G\nphp_value post_max_size 1G\nphp_value upload_max_filesize 1G" > /temp_htaccess && \
+    if [ -f /var/www/html/.htaccess ]; then \
+    cat /temp_htaccess /var/www/html/.htaccess > /var/www/html/.htaccess.new && \
+    mv /var/www/html/.htaccess.new /var/www/html/.htaccess; \
     else \
-    mv /temp_htaccess /html/.htaccess; \
+    mv /temp_htaccess /var/www/html/.htaccess; \
     fi && \
     rm -f /temp_htaccess
 ENV HOST 0.0.0.0
